@@ -1,7 +1,25 @@
+import React, { useState } from 'react';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+
 function App() {
+  const [user, setUser] = useState(null);
+
+  const handleLoginSuccess = (userData) => {
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+  };
+
   return (
-    <div>
-      <h4 className="text-4xl">Hello world</h4>
+    <div className="min-h-screen bg-slate-50">
+      {user ? (
+        <Dashboard user={user} onLogout={handleLogout} />
+      ) : (
+        <Login onLoginSuccess={handleLoginSuccess} />
+      )}
     </div>
   );
 }
