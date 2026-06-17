@@ -3,11 +3,15 @@ import { InvariantError } from '../exceptions/index.js';
 
 const validateUser = (req, res, next) => {
   const schema = Joi.object({
-    username: Joi.string().min(3).required().messages({
-      'string.base': 'Username must be a string',
-      'string.empty': 'Username cannot be empty',
-      'any.required': 'Username is required',
+    name: Joi.string().min(3).required().messages({
+      'string.base': 'Name must be a string',
+      'string.empty': 'Name cannot be empty',
+      'any.required': 'Name is required',
     }),
+    nip: Joi.string().optional(),
+    roleId: Joi.number().integer().optional(),
+    deptId: Joi.number().integer().optional(),
+    status: Joi.number().integer().optional(),
     email: Joi.string().email().required().messages({
       'string.base': 'Email must be a string',
       'string.email': 'Email must be a valid email address',

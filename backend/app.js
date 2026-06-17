@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import userRouter from './src/routes/userRouter.js';
 import authRouter from './src/routes/authRouter.js';
-import errorHandler from './src/middlewares/error.js';
+import errorHandler from './src/middlewares/errorHandler.js';
 
 const app = express();
 const port = 3000;

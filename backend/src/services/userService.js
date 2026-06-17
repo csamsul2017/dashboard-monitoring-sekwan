@@ -1,23 +1,30 @@
 import prisma from '../config/db.js';
 import bcrypt from 'bcrypt';
+import { nanoid } from 'nanoid';
 import { InvariantError, NotFoundError } from '../exceptions/index.js';
 
 const createUser = async userData => {
-  const { username, email, password } = userData;
+  const { name, nip, email, password, roleId, deptId, status } = userData;
+  const id = `user-${nanoid(10)}`;
   const hashedPassword = await bcrypt.hash(password, 10);
   try {
     const newUser = await prisma.user.create({
       data: {
-        username,
+        id,
+        name,
+        nip,
         email,
         password: hashedPassword,
+        roleId,
+        deptId,
+        status,
       },
     });
 
     return newUser;
   } catch (error) {
     if (error.code === 'P2002') {
-      throw new InvariantError('Username or email already in use');
+      throw new InvariantError('Email or NIP already in use');
     }
     throw error;
   }
@@ -27,8 +34,12 @@ const getAllUsers = async () => {
   const users = await prisma.user.findMany({
     select: {
       id: true,
-      username: true,
+      name: true,
+      nip: true,
       email: true,
+      roleId: true,
+      deptId: true,
+      status: true,
     },
   });
   return users;
@@ -36,11 +47,15 @@ const getAllUsers = async () => {
 
 const getUserById = async id => {
   const user = await prisma.user.findUnique({
-    where: { id: parseInt(id) },
+    where: { id },
     select: {
       id: true,
-      username: true,
+      name: true,
+      nip: true,
       email: true,
+      roleId: true,
+      deptId: true,
+      status: true,
     },
   });
 
@@ -53,7 +68,7 @@ const getUserById = async id => {
 
 const deleteUser = async id => {
   const user = await prisma.user.findUnique({
-    where: { id: parseInt(id) },
+    where: { id },
   });
 
   if (!user) {
@@ -61,11 +76,15 @@ const deleteUser = async id => {
   }
 
   const deletedUser = await prisma.user.delete({
-    where: { id: parseInt(id) },
+    where: { id },
     select: {
       id: true,
-      username: true,
+      name: true,
+      nip: true,
       email: true,
+      roleId: true,
+      deptId: true,
+      status: true,
     },
   });
 

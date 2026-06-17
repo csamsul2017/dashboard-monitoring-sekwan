@@ -14,8 +14,35 @@ datasource db {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  username   String    @unique
-  email      String    @unique
+  id         String       @id
+  nip        String?      @unique
+  name       String
+  email      String       @unique
+  roleId     Int?         @map("role_id")
+  deptId     Int?         @map("dept_id")
+  status     Int?
+  lastLogin  DateTime?    @map("last_login") 
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
   password   String
+
+  role       Role?        @relation(fields: [roleId], references: [id])
+  department Department?  @relation(fields: [deptId], references: [id])
+}
+
+model Department {
+  id         Int          @id @default(autoincrement())
+  deptCode   String       @unique @map("dept_code")
+  name       String
+  headId     String
+
+  users      User[]
+}
+
+model Role {
+  id         Int          @id @default(autoincrement())
+  roleCode   String       @unique @map("role_code")
+  title      String
+
+  users      User[]
 }
