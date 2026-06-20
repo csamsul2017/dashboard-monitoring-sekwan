@@ -5,12 +5,12 @@ import { InvariantError, NotFoundError } from '../exceptions/index.js';
 
 const createUser = async userData => {
   const { name, nip, email, password, roleId, deptId, status } = userData;
-  const id = `user-${nanoid(10)}`;
-  const hashedPassword = await bcrypt.hash(password, 10);
+
   try {
-    await prisma.user.create({
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await prisma.user.create({
       data: {
-        id,
+        id: `user-${nanoid(10)}`,
         nip,
         name,
         email,
@@ -19,12 +19,19 @@ const createUser = async userData => {
         deptId,
         status,
       },
+      select: {
+        id: true,
+        nip: true,
+        name: true,
+        email: true,
+      },
     });
 
-    return { id, nip, name, email };
+    return { id: newUser.id, nip: newUser.nip, name: newUser.name, email: newUser.email };
   } catch (error) {
     if (error.code === 'P2002') {
-      throw new InvariantError('Email or NIP already in use');
+      const field = error.meta?.target?.[0];
+      throw new InvariantError(`${field} already in use`);
     }
     throw error;
   }

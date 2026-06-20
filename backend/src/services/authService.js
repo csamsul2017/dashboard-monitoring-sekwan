@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { ClientError } from '../exceptions/index.js';
 import tokenManager from '../utils/token.util.js';
 
-const authenticateUser = async userData => {
+const authenticate = async userData => {
   const { email, password } = userData;
   const user = await prisma.user.findUnique({
     where: { email },
@@ -23,7 +23,7 @@ const authenticateUser = async userData => {
 
   await prisma.refreshToken.create({
     data: {
-      token: accessToken,
+      token: refreshToken,
       userId: user.id,
       expiresAt,
     },
@@ -32,4 +32,30 @@ const authenticateUser = async userData => {
   return { accessToken, refreshToken };
 };
 
-export { authenticateUser };
+const reAuthenticate = async userData => {
+  if (!userData) {
+    throw new ClientError('Refresh token is required', 400);
+  }
+  const user = await prisma.refreshToken.findFirst({
+    where: {
+      token: userData,
+    },
+  });
+  if (!user) {
+    throw new ClientError('Refresh token invalid or has been revoked', 401);
+  }
+
+  const accessToken = tokenManager.generateAccessToken({ userId: user.userId });
+
+  return { accessToken };
+};
+
+const unAuthenticate = async userData => {
+  await prisma.refreshToken.deleteMany({
+    where: {
+      token: userData,
+    },
+  });
+};
+
+export { authenticate, reAuthenticate, unAuthenticate };

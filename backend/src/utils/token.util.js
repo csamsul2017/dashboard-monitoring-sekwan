@@ -10,7 +10,7 @@ const tokenManager = {
       return payload;
     } catch (error) {
       console.log(error);
-      throw new InvariantError();
+      throw new InvariantError('Authentication failed');
     }
   },
   verifyRefreshToken: refreshToken => {
