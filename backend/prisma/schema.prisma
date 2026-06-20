@@ -14,20 +14,22 @@ datasource db {
 }
 
 model User {
-  id         String       @id
-  nip        String?      @unique
-  name       String
-  email      String       @unique
-  roleId     Int?         @map("role_id")
-  deptId     Int?         @map("dept_id")
-  status     Int?
-  lastLogin  DateTime?    @map("last_login") 
-  createdAt  DateTime     @default(now()) @map("created_at")
-  updatedAt  DateTime     @updatedAt @map("updated_at")
-  password   String
+  id                  String       @id
+  nip                 String?      @unique
+  name                String
+  email               String       @unique
+  roleId              Int?         @map("role_id")
+  deptId              Int?         @map("dept_id")
+  status              Int?
+  lastLogin           DateTime?    @map("last_login") 
+  createdAt           DateTime     @default(now()) @map("created_at")
+  updatedAt           DateTime     @updatedAt @map("updated_at")
+  password            String
 
-  role       Role?        @relation(fields: [roleId], references: [id])
-  department Department?  @relation(fields: [deptId], references: [id])
+  role                Role?        @relation(fields: [roleId], references: [id])
+  department          Department?  @relation(fields: [deptId], references: [id])
+  
+  refreshTokens       RefreshToken[]
 }
 
 model Department {
@@ -45,4 +47,16 @@ model Role {
   title      String
 
   users      User[]
+}
+
+model RefreshToken {
+  id         Int          @id @default(autoincrement())
+  token      String       @unique
+  userId     String?      @map("user_id")
+  expiresAt  DateTime     @map("expires_at")
+  deviceInfo String?      @map("device_info")
+
+  user       User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_token")
 }

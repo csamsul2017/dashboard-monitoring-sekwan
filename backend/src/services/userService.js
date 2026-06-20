@@ -8,11 +8,11 @@ const createUser = async userData => {
   const id = `user-${nanoid(10)}`;
   const hashedPassword = await bcrypt.hash(password, 10);
   try {
-    const newUser = await prisma.user.create({
+    await prisma.user.create({
       data: {
         id,
-        name,
         nip,
+        name,
         email,
         password: hashedPassword,
         roleId,
@@ -21,7 +21,7 @@ const createUser = async userData => {
       },
     });
 
-    return newUser;
+    return { id, nip, name, email };
   } catch (error) {
     if (error.code === 'P2002') {
       throw new InvariantError('Email or NIP already in use');
