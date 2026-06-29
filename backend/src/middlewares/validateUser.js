@@ -11,7 +11,7 @@ const validateUser = (req, res, next) => {
     nip: Joi.string().optional(),
     roleId: Joi.number().integer().optional(),
     deptId: Joi.number().integer().optional(),
-    status: Joi.number().integer().optional(),
+    isActive: Joi.bool().required(),
     email: Joi.string().email().required().messages({
       'string.base': 'Email must be a string',
       'string.email': 'Email must be a valid email address',

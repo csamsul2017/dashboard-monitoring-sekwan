@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 import { InvariantError, NotFoundError } from '../exceptions/index.js';
 
 const createUser = async userData => {
-  const { name, nip, email, password, roleId, deptId, status } = userData;
+  const { name, nip, email, password, roleId, deptId, isActive } = userData;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -17,7 +17,7 @@ const createUser = async userData => {
         password: hashedPassword,
         roleId,
         deptId,
-        status,
+        isActive,
       },
       select: {
         id: true,

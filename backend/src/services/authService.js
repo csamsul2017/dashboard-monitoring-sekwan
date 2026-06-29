@@ -7,6 +7,10 @@ const authenticate = async userData => {
   const { email, password } = userData;
   const user = await prisma.user.findUnique({
     where: { email },
+    select: {
+      id: true,
+      status: true,
+    },
   });
 
   if (!user) {
@@ -14,6 +18,7 @@ const authenticate = async userData => {
   }
 
   const isValidPassword = await bcrypt.compare(password, user.password);
+
   if (!isValidPassword) {
     throw new ClientError('Invalid email or password', 401);
   }

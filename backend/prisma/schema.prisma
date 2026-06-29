@@ -20,7 +20,7 @@ model User {
   email               String       @unique
   roleId              Int?         @map("role_id")
   deptId              Int?         @map("dept_id")
-  status              Int?
+  isActive            Boolean      @map("is_active")
   lastLogin           DateTime?    @map("last_login") 
   createdAt           DateTime     @default(now()) @map("created_at")
   updatedAt           DateTime     @updatedAt @map("updated_at")
@@ -37,7 +37,6 @@ model Department {
   deptCode   String       @unique @map("dept_code")
   name       String
   headId     String
-
   users      User[]
 }
 
