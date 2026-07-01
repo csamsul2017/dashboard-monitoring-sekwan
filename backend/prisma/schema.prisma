@@ -27,8 +27,10 @@ model User {
   password            String
 
   role                Role?        @relation(fields: [roleId], references: [id])
-  department          Department?  @relation(fields: [deptId], references: [id])
+  department          Department?  @relation("DepartmentUsers", fields: [deptId], references: [id])
   
+  headedDepartments   Department[] @relation("DepartmentHead") 
+
   refreshTokens       RefreshToken[]
 }
 
@@ -36,8 +38,11 @@ model Department {
   id         Int          @id @default(autoincrement())
   deptCode   String       @unique @map("dept_code")
   name       String
-  headId     String
-  users      User[]
+  headId     String?      @map("head_id")
+
+  head       User?        @relation("DepartmentHead", fields:[headId], references: [id])
+
+  users      User[]       @relation("DepartmentUsers")
 }
 
 model Role {

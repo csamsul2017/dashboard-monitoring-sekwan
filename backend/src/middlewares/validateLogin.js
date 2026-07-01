@@ -1,5 +1,5 @@
-import Joi from 'joi';
-import { InvariantError } from '../exceptions/index.js';
+import Joi from "joi";
+import { InvariantError } from "../exceptions/index.js";
 
 const validateLogin = (req, res, next) => {
   const schema = Joi.object({

@@ -1,9 +1,9 @@
-import prisma from '../config/db.js';
-import bcrypt from 'bcrypt';
-import { nanoid } from 'nanoid';
-import { InvariantError, NotFoundError } from '../exceptions/index.js';
+import prisma from "../config/db.js";
+import bcrypt from "bcrypt";
+import { nanoid } from "nanoid";
+import { InvariantError, NotFoundError } from "../exceptions/index.js";
 
-const createUser = async userData => {
+const createUser = async (userData) => {
   const { name, nip, email, password, roleId, deptId, isActive } = userData;
 
   try {
@@ -27,9 +27,14 @@ const createUser = async userData => {
       },
     });
 
-    return { id: newUser.id, nip: newUser.nip, name: newUser.name, email: newUser.email };
+    return {
+      id: newUser.id,
+      nip: newUser.nip,
+      name: newUser.name,
+      email: newUser.email,
+    };
   } catch (error) {
-    if (error.code === 'P2002') {
+    if (error.code === "P2002") {
       const field = error.meta?.target?.[0];
       throw new InvariantError(`${field} already in use`);
     }
@@ -46,13 +51,13 @@ const getAllUsers = async () => {
       email: true,
       roleId: true,
       deptId: true,
-      status: true,
+      isActive: true,
     },
   });
   return users;
 };
 
-const getUserById = async id => {
+const getUserById = async (id) => {
   const user = await prisma.user.findUnique({
     where: { id },
     select: {
@@ -62,12 +67,12 @@ const getUserById = async id => {
       email: true,
       roleId: true,
       deptId: true,
-      status: true,
+      isActive: true,
     },
   });
 
   if (!user) {
-    throw new NotFoundError('User not found');
+    throw new NotFoundError("User not found");
   }
 
   return user;
@@ -84,20 +89,20 @@ const updateUserById = async (id, userData) => {
       email: true,
       roleId: true,
       deptId: true,
-      status: true,
+      isActive: true,
     },
   });
 
   return user;
 };
 
-const deleteUser = async id => {
+const deleteUser = async (id) => {
   const user = await prisma.user.findUnique({
     where: { id },
   });
 
   if (!user) {
-    throw new NotFoundError('User not found');
+    throw new NotFoundError("User not found");
   }
 
   const deletedUser = await prisma.user.delete({
@@ -109,7 +114,7 @@ const deleteUser = async id => {
       email: true,
       roleId: true,
       deptId: true,
-      status: true,
+      isActive: true,
     },
   });
 
